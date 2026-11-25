@@ -56,6 +56,13 @@ export const SECCIONES = [
     ],
   },
   {
+    id: "rutas",
+    label: "Rutas de reparto",
+    ruta: "/rutas",
+    titulo: (r) => r.nombre,
+    subtitulo: (r) => `${r.repartidor?.nombre ?? "Sin repartidor"} · ${r.estado}`,
+  },
+  {
     id: "centros",
     label: "Centros de distribución",
     ruta: "/centros-distribucion",

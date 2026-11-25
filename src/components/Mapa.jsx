@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef,  useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Polygon, Popup, Pane, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Polygon, Polyline, Popup, Pane, useMap, useMapEvents } from "react-leaflet";
 import FormNuevaUbicacion from "./FormNuevaUbicacion.jsx";
 import PopupCentro from "./PopupCentro.jsx";
 import ControlDibujo from "./ControlDibujo.jsx";
@@ -72,6 +72,19 @@ function CapaZonas({ zonas, onClicZona }) {
   ));
 }
 
+// Dibuja la ruta seleccionada y acerca el mapa para que se vea completa.
+function CapaRuta({ ruta }) {
+  const map = useMap();
+  const puntos = ruta ? ruta.geometria.coordinates.map(([lng, lat]) => [lat, lng]) : [];
+
+  useEffect(() => {
+    if (puntos.length > 1) map.fitBounds(puntos, { padding: [60, 60] });
+  }, [ruta]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!ruta) return null;
+  return <Polyline positions={puntos} className="ruta" bubblingMouseEvents={false} />;
+}
+
 function ClicEnMapa({ onClic }) {
   const map = useMapEvents({
     click(e) {
@@ -95,6 +108,7 @@ export default function Mapa({
   onEliminar,
   onSeleccionar,
   onCrearZona,
+  ruta,
 }) {
   const [puntoNuevo, setPuntoNuevo] = useState(null);
   const [zonaNueva, setZonaNueva] = useState(null);
@@ -130,6 +144,7 @@ export default function Mapa({
       <ControlDibujo onDibujar={manejarDibujo} />
 
       <CapaZonas zonas={zonas} onClicZona={setPuntoNuevo} />
+      <CapaRuta ruta={ruta} />
 
       <Pane name="ubicaciones" style={{ zIndex: 450 }}>
         {ubicaciones.map((ubicacion) => {

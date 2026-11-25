@@ -4,6 +4,7 @@ import Mapa from "../components/Mapa.jsx";
 import ListaSeccion from "../components/ListaSeccion.jsx";
 import Detalle from "../components/Detalle.jsx";
 import DetalleZona from "../components/DetalleZona.jsx";
+import DetalleRuta from "../components/DetalleRuta.jsx";
 import FormRegistro from "../components/FormRegistro.jsx";
 import PanelInferior from "../components/PanelInferior.jsx";
 import { listar, crear, actualizar, eliminar } from "../services/recursos.js";
@@ -22,6 +23,7 @@ export default function Panel() {
     categorias: [],
     repartidores: [],
     vehiculos: [],
+    rutas: [],
     centros: [],
   });
   const [cargando, setCargando] = useState(true);
@@ -29,10 +31,12 @@ export default function Panel() {
   const [seleccionado, setSeleccionado] = useState(null);
   const [registro, setRegistro] = useState(null);
   const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
+  const [rutaSeleccionada, setRutaSeleccionada] = useState(null);
   const [aviso, setAviso] = useState(null);
 
   const ubicacionSeleccionada = datos.ubicaciones.find((u) => u._id === seleccionado) || null;
   const zonaDetalle = datos.zonas.find((z) => z._id === zonaSeleccionada) || null;
+  const rutaDetalle = datos.rutas.find((r) => r._id === rutaSeleccionada) || null;
 
   useEffect(() => {
     if (!aviso) return;
@@ -56,6 +60,7 @@ export default function Panel() {
     setSeccion(id);
     setRegistro(null);
     setZonaSeleccionada(null);
+    setRutaSeleccionada(null);
   }
 
   async function aplicarFiltros(nuevos) {
@@ -140,6 +145,9 @@ export default function Panel() {
     } else if (actual.id === "zonas") {
       setSeleccionado(null);
       setZonaSeleccionada(item._id);
+    } else if (actual.id === "rutas") {
+      setSeleccionado(null);
+      setRutaSeleccionada(item._id);
     } else if (actual.campos) {
       setSeleccionado(null);
       setRegistro(item);
@@ -166,7 +174,13 @@ export default function Panel() {
             items={datos[actual.id]}
             cargando={cargando}
             seleccionadoId={
-              actual.id === "ubicaciones" ? seleccionado : actual.id === "zonas" ? zonaSeleccionada : registro?._id
+              actual.id === "ubicaciones"
+                ? seleccionado
+                : actual.id === "zonas"
+                  ? zonaSeleccionada
+                  : actual.id === "rutas"
+                    ? rutaSeleccionada
+                    : registro?._id
             }
             onSeleccionar={manejarSeleccion}
           />
@@ -184,6 +198,7 @@ export default function Panel() {
             onEliminar={eliminarUbicacion}
             onSeleccionar={setSeleccionado}
             onCrearZona={crearZona}
+            ruta={actual.id === "rutas" ? rutaDetalle : null}
           />
           {aviso && (
             <p className={`mensaje mensaje-${aviso.tipo} aviso-flotante`} role="status">
@@ -211,7 +226,13 @@ export default function Panel() {
           </aside>
         )}
 
-        {!registro && !(zonaDetalle && actual.id === "zonas") && ubicacionSeleccionada && (
+        {rutaDetalle && actual.id === "rutas" && (
+          <aside className="panel-detalle">
+            <DetalleRuta ruta={rutaDetalle} onCerrar={() => setRutaSeleccionada(null)} />
+          </aside>
+        )}
+
+        {!registro && !(zonaDetalle && actual.id === "zonas") && !(rutaDetalle && actual.id === "rutas") && ubicacionSeleccionada && (
           <aside className="panel-detalle">
             <Detalle ubicacion={ubicacionSeleccionada} onCerrar={() => setSeleccionado(null)} />
           </aside>
