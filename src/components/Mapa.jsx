@@ -51,13 +51,34 @@ function CentrarEn({ ubicacion }) {
   return null;
 }
 
+// Al hacer clic dentro de una zona se abre el formulario de nueva ubicación
+// con esa zona ya elegida. Mientras se dibuja con Geoman, el clic se ignora.
+function CapaZonas({ zonas, onClicZona }) {
+  const map = useMap();
+
+  return zonas.map((zona) => (
+    <Polygon
+      key={zona._id}
+      positions={zona.geometria.coordinates[0].map(([lng, lat]) => [lat, lng])}
+      bubblingMouseEvents={false}
+      pathOptions={{ className: "zona" }}
+      eventHandlers={{
+        click: (e) => {
+          if (map.pm?.globalDrawModeEnabled()) return;
+          onClicZona({ lat: e.latlng.lat, lng: e.latlng.lng, zonaId: zona._id });
+        },
+      }}
+    />
+  ));
+}
+
 function ClicEnMapa({ onClic }) {
   const map = useMapEvents({
     click(e) {
       if (map.pm?.globalDrawModeEnabled()) return;
       const objetivo = e.originalEvent.target;
       if (!objetivo.isConnected || objetivo.closest(".leaflet-popup")) return;
-      onClic(e.latlng);
+      onClic({ lat: e.latlng.lat, lng: e.latlng.lng });
     },
   });
   return null;
@@ -74,7 +95,6 @@ export default function Mapa({
   onEliminar,
   onSeleccionar,
   onCrearZona,
-  onEliminarZona,
 }) {
   const [puntoNuevo, setPuntoNuevo] = useState(null);
   const [zonaNueva, setZonaNueva] = useState(null);
@@ -109,27 +129,7 @@ export default function Mapa({
       <CentrarEn ubicacion={seleccionado} />
       <ControlDibujo onDibujar={manejarDibujo} />
 
-      {zonas.map((zona) => (
-        <Polygon
-          key={zona._id}
-          positions={zona.geometria.coordinates[0].map(([lng, lat]) => [lat, lng])}
-          bubblingMouseEvents={false}
-          pathOptions={{ className: "zona" }}
-        >
-          <Popup>
-            <div className="popup-centro">
-              <strong>{zona.nombre}</strong>
-              <span className="popup-meta">{zona.centro?.nombre ?? "Sin centro"}</span>
-              <span>{zona.descripcion}</span>
-              <div className="form-acciones">
-                <button type="button" className="btn-peligro" onClick={() => onEliminarZona(zona._id)}>
-                  Eliminar zona
-                </button>
-              </div>
-            </div>
-          </Popup>
-        </Polygon>
-      ))}
+      <CapaZonas zonas={zonas} onClicZona={setPuntoNuevo} />
 
       <Pane name="ubicaciones" style={{ zIndex: 450 }}>
         {ubicaciones.map((ubicacion) => {
@@ -164,6 +164,7 @@ export default function Mapa({
             punto={puntoNuevo}
             categorias={categorias}
             zonas={zonas}
+            zonaInicial={puntoNuevo.zonaId}
             onGuardar={guardarNueva}
             onCancelar={() => setPuntoNuevo(null)}
           />

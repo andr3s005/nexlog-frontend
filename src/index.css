@@ -18,6 +18,8 @@
   --color-warning-bg: #FEF3E2;
   --color-danger: #B91C1C;
   --color-danger-bg: #FDECEC;
+  --color-editar: #FBBF24;
+  --color-on-editar: #1F1A05;
 
   --map-zona: #0F766E;
   --map-ruta: #D97706;
@@ -110,4 +112,16 @@ body {
 .mensaje-info {
   background: var(--color-soft);
   color: var(--color-text);
+}
+
+
+.btn-editar {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-editar);
+  color: var(--color-on-editar);
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
 }

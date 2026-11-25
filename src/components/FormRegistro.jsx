@@ -112,7 +112,7 @@ export default function FormRegistro({ seccion, inicial, onGuardar, onEliminar, 
               </div>
             </>
           ) : (
-            <button type="button" className="btn-secundario" onClick={() => setConfirmar(true)}>
+            <button type="button" className="btn-peligro" onClick={() => setConfirmar(true)}>
               Eliminar
             </button>
           )}

@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-export default function FormNuevaUbicacion({ punto, categorias, zonas, onGuardar, onCancelar, inicial = null, titulo = "Nueva ubicación" }) {
+export default function FormNuevaUbicacion({ punto, categorias, zonas, onGuardar, onCancelar, inicial = null, zonaInicial = "", titulo = "Nueva ubicación" }) {
   const [nombre, setNombre] = useState(inicial?.nombre ?? "");
   const [descripcion, setDescripcion] = useState(inicial?.descripcion ?? "");
   const [categoriaId, setCategoriaId] = useState(inicial?.categoria?._id ?? "");
-  const [zonaId, setZonaId] = useState(inicial?.zona?._id ?? "");
+  const [zonaId, setZonaId] = useState(inicial?.zona?._id ?? zonaInicial ?? "");
   const [error, setError] = useState("");
   const [guardando, setGuardando] = useState(false);
 

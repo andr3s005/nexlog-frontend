@@ -3,6 +3,7 @@ import TopBar from "../components/TopBar.jsx";
 import Mapa from "../components/Mapa.jsx";
 import ListaSeccion from "../components/ListaSeccion.jsx";
 import Detalle from "../components/Detalle.jsx";
+import DetalleZona from "../components/DetalleZona.jsx";
 import FormRegistro from "../components/FormRegistro.jsx";
 import PanelInferior from "../components/PanelInferior.jsx";
 import { listar, crear, actualizar, eliminar } from "../services/recursos.js";
@@ -27,9 +28,11 @@ export default function Panel() {
   const [filtros, setFiltros] = useState(FILTROS_VACIOS);
   const [seleccionado, setSeleccionado] = useState(null);
   const [registro, setRegistro] = useState(null);
+  const [zonaSeleccionada, setZonaSeleccionada] = useState(null);
   const [aviso, setAviso] = useState(null);
 
   const ubicacionSeleccionada = datos.ubicaciones.find((u) => u._id === seleccionado) || null;
+  const zonaDetalle = datos.zonas.find((z) => z._id === zonaSeleccionada) || null;
 
   useEffect(() => {
     if (!aviso) return;
@@ -52,6 +55,7 @@ export default function Panel() {
   function cambiarSeccion(id) {
     setSeccion(id);
     setRegistro(null);
+    setZonaSeleccionada(null);
   }
 
   async function aplicarFiltros(nuevos) {
@@ -91,6 +95,7 @@ export default function Panel() {
   async function eliminarZona(id) {
     try {
       await eliminar("/zonas-reparto", id);
+      setZonaSeleccionada(null);
       await cargar("zonas");
       setAviso({ tipo: "exito", texto: "Zona eliminada." });
     } catch (error) {
@@ -132,6 +137,9 @@ export default function Panel() {
     if (actual.id === "ubicaciones") {
       setRegistro(null);
       setSeleccionado(item._id);
+    } else if (actual.id === "zonas") {
+      setSeleccionado(null);
+      setZonaSeleccionada(item._id);
     } else if (actual.campos) {
       setSeleccionado(null);
       setRegistro(item);
@@ -157,7 +165,9 @@ export default function Panel() {
             seccion={actual}
             items={datos[actual.id]}
             cargando={cargando}
-            seleccionadoId={actual.id === "ubicaciones" ? seleccionado : registro?._id}
+            seleccionadoId={
+              actual.id === "ubicaciones" ? seleccionado : actual.id === "zonas" ? zonaSeleccionada : registro?._id
+            }
             onSeleccionar={manejarSeleccion}
           />
         </aside>
@@ -174,7 +184,6 @@ export default function Panel() {
             onEliminar={eliminarUbicacion}
             onSeleccionar={setSeleccionado}
             onCrearZona={crearZona}
-            onEliminarZona={eliminarZona}
           />
           {aviso && (
             <p className={`mensaje mensaje-${aviso.tipo} aviso-flotante`} role="status">
@@ -183,7 +192,7 @@ export default function Panel() {
           )}
         </main>
 
-        {registro && actual.campos ? (
+        {registro && actual.campos && (
           <aside className="panel-detalle">
             <FormRegistro
               key={registro._id ?? "nuevo"}
@@ -194,12 +203,18 @@ export default function Panel() {
               onCancelar={() => setRegistro(null)}
             />
           </aside>
-        ) : (
-          ubicacionSeleccionada && (
-            <aside className="panel-detalle">
-              <Detalle ubicacion={ubicacionSeleccionada} onCerrar={() => setSeleccionado(null)} />
-            </aside>
-          )
+        )}
+
+        {!registro && zonaDetalle && actual.id === "zonas" && (
+          <aside className="panel-detalle">
+            <DetalleZona zona={zonaDetalle} onEliminar={eliminarZona} onCerrar={() => setZonaSeleccionada(null)} />
+          </aside>
+        )}
+
+        {!registro && !(zonaDetalle && actual.id === "zonas") && ubicacionSeleccionada && (
+          <aside className="panel-detalle">
+            <Detalle ubicacion={ubicacionSeleccionada} onCerrar={() => setSeleccionado(null)} />
+          </aside>
         )}
       </div>
 

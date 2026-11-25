@@ -59,10 +59,10 @@ export default function PopupCentro({ ubicacion, categorias, zonas, onEditar, on
         </div>
       ) : (
         <div className="form-acciones">
-          <button type="button" className="btn-primario" onClick={() => setModo("editar")}>
+          <button type="button" className="btn-editar" onClick={() => setModo("editar")}>
             Editar
           </button>
-          <button type="button" className="btn-secundario" onClick={() => setModo("confirmar")}>
+          <button type="button" className="btn-peligro" onClick={() => setModo("confirmar")}>
             Eliminar
           </button>
         </div>
