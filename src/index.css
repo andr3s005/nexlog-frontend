@@ -1,0 +1,107 @@
+:root {
+  --color-bg: #EEF2F6;
+  --color-surface: #FFFFFF;
+  --color-soft: #E3EAF2;
+  --color-chip: #C9D6E4;
+  --color-border: #C9D6E4;
+  --color-border-strong: #8FA3BA;
+  --color-text: #0F1E2E;
+  --color-muted: #46566A;
+  --color-primary: #1D4ED8;
+  --color-on-primary: #FFFFFF;
+  --color-header-bg: #0F2A44;
+  --color-header-text: #E6EEF6;
+
+  --color-success: #15803D;
+  --color-success-bg: #E7F6EC;
+  --color-warning: #B45309;
+  --color-warning-bg: #FEF3E2;
+  --color-danger: #B91C1C;
+  --color-danger-bg: #FDECEC;
+
+  --map-zona: #0F766E;
+  --map-ruta: #D97706;
+  --map-centro: #1D4ED8;
+  --map-repartidor: #9333EA;
+
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] {
+  --color-bg: #111A24;
+  --color-surface: #182433;
+  --color-soft: #1F2D3D;
+  --color-chip: #2A3B50;
+  --color-border: #2A3B50;
+  --color-border-strong: #4A607A;
+  --color-text: #E6EEF6;
+  --color-muted: #A9B7C6;
+  --color-primary: #60A5FA;
+  --color-on-primary: #0B1B2E;
+  --color-header-bg: #0B1724;
+  --color-header-text: #E6EEF6;
+
+  --color-success: #4ADE80;
+  --color-success-bg: #14301F;
+  --color-warning: #FBBF24;
+  --color-warning-bg: #3A2A10;
+  --color-danger: #F87171;
+  --color-danger-bg: #3A1A1A;
+}
+
+body {
+  margin: 0;
+}
+
+
+.btn-primario {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
+}
+
+.btn-secundario {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
+}
+
+.mensaje {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.mensaje-error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.mensaje-exito {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.btn-peligro {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-danger);
+  color: #FFFFFF;
+  font: 600 14px Inter, sans-serif;
+  cursor: pointer;
+}

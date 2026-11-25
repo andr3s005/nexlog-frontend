@@ -1,0 +1,91 @@
+.mapa{
+    width: 100%;
+    height: 100%;
+}
+
+.marcador-centro{
+    fill: var(--map-centro);
+    fill-opacity: 1;
+    stroke: #FFFFFF;
+    stroke-width: 3;
+}
+
+.form-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 200px;
+  font: 13px Inter, sans-serif;
+}
+
+.form-popup label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-popup input,
+.form-popup select {
+  min-height: 30px;
+  padding: 0 6px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.form-error {
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  font-size: 13px;
+}
+
+.form-acciones {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.form-popup .btn-primario,
+.form-popup .btn-secundario {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.mapa .leaflet-popup-content {
+  margin: 10px 12px;
+}
+
+.popup-centro {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: 13px Inter, sans-serif;
+}
+
+.popup-meta {
+  color: var(--color-muted);
+}
+
+.popup-confirmar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border);
+}
+
+.form-popup .btn-peligro,
+.popup-centro .btn-primario,
+.popup-centro .btn-secundario,
+.popup-centro .btn-peligro {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 13px;
+}

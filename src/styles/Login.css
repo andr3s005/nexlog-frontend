@@ -1,0 +1,89 @@
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-tarjeta {
+  width: 100%;
+  max-width: 400px;
+  padding: 28px;
+  box-sizing: border-box;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.login-marca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.login-pestanas {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-soft);
+  border-radius: 8px;
+}
+
+.login-pestanas button {
+  flex: 1;
+  min-height: 40px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-muted);
+  font: 500 14px Inter, sans-serif;
+  cursor: pointer;
+}
+
+.login-pestanas .activa {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-form label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-form input {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 15px Inter, sans-serif;
+}
+
+.login-form .btn-primario {
+  min-height: 44px;
+  margin-top: 6px;
+}
+
+.login-nota {
+  margin: 4px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--color-soft);
+  font-size: 13px;
+}
