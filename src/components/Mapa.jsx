@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef,  useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Polygon, Popup, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, Polygon, Popup, Pane, useMap, useMapEvents } from "react-leaflet";
 import FormNuevaUbicacion from "./FormNuevaUbicacion.jsx";
 import PopupCentro from "./PopupCentro.jsx";
 import ControlDibujo from "./ControlDibujo.jsx";
@@ -131,29 +131,31 @@ export default function Mapa({
         </Polygon>
       ))}
 
-      {ubicaciones.map((ubicacion) => {
-        const [lng, lat] = ubicacion.ubicacion.coordinates;
-        return (
-          <CircleMarker
-            key={ubicacion._id}
-            center={[lat, lng]}
-            radius={seleccionado?._id === ubicacion._id ? 12 : 9}
-            bubblingMouseEvents={false}
-            pathOptions={{ className: "marcador-centro" }}
-            eventHandlers={{ click: () => onSeleccionar(ubicacion._id) }}
-          >
-            <Popup>
-              <PopupCentro
-                ubicacion={ubicacion}
-                categorias={categorias}
-                zonas={zonas}
-                onEditar={onEditar}
-                onEliminar={onEliminar}
-              />
-            </Popup>
-          </CircleMarker>
-        );
-      })}
+      <Pane name="ubicaciones" style={{ zIndex: 450 }}>
+        {ubicaciones.map((ubicacion) => {
+          const [lng, lat] = ubicacion.ubicacion.coordinates;
+          return (
+            <CircleMarker
+              key={ubicacion._id}
+              center={[lat, lng]}
+              radius={seleccionado?._id === ubicacion._id ? 12 : 9}
+              bubblingMouseEvents={false}
+              pathOptions={{ className: "marcador-centro" }}
+              eventHandlers={{ click: () => onSeleccionar(ubicacion._id) }}
+            >
+              <Popup>
+                <PopupCentro
+                  ubicacion={ubicacion}
+                  categorias={categorias}
+                  zonas={zonas}
+                  onEditar={onEditar}
+                  onEliminar={onEliminar}
+                />
+              </Popup>
+            </CircleMarker>
+          );
+        })}
+      </Pane>
 
       {puntoNuevo && (
         <Popup position={puntoNuevo} eventHandlers={{ remove: () => setPuntoNuevo(null) }}>
