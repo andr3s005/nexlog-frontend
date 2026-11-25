@@ -9,7 +9,7 @@ export default function App(){
         <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/panel" element={<RutaPrivada><Panel /></RutaPrivada>} />
-            <Route path="/usuarios" element={<RutaPrivada><Aprobacion /></RutaPrivada>} />
+            <Route path="/usuarios" element={<RutaPrivada soloAdmin><Aprobacion /></RutaPrivada>} />
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>
     );

@@ -12,6 +12,10 @@ export default function TopBar({ secciones, actual, onCambiarSeccion, zonas }) {
 
   const navigate = useNavigate();
 
+  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+  const esAdmin = usuario?.rol === "administrador";
+  const iniciales = usuario?.nombre ? usuario.nombre.slice(0, 2).toUpperCase() : "?";
+
   function cerrarSesion() {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
@@ -46,7 +50,7 @@ export default function TopBar({ secciones, actual, onCambiarSeccion, zonas }) {
               </button>
             ))}
             <hr />
-            <Link to="/usuarios">Aprobación de usuarios</Link>
+            {esAdmin && <Link to="/usuarios">Aprobación de usuarios</Link>}
             <button type="button" onClick={cerrarSesion}>Cerrar sesión</button>
           </nav>
         )}
@@ -67,7 +71,7 @@ export default function TopBar({ secciones, actual, onCambiarSeccion, zonas }) {
       </form>
 
       <button type="button" className="btn-secundario">+ {actual.nuevo}</button>
-      <span className="topbar-avatar" title="Usuario">AL</span>
+      <span className="topbar-avatar" title={usuario?.nombre ?? "Usuario"}>{iniciales}</span>
     </header>
   );
 }

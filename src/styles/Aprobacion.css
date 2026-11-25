@@ -1,0 +1,73 @@
+.aprobacion {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.aprobacion-volver {
+  margin-left: auto;
+  color: var(--color-header-text);
+  font-size: 14px;
+}
+
+.aprobacion-contenido {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aprobacion-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.aprobacion-encabezado h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.aprobacion-encabezado p {
+  margin: 4px 0 0;
+  color: var(--color-muted);
+}
+
+.aprobacion-tabla {
+  overflow-x: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.aprobacion-tabla .tabla tbody tr {
+  cursor: default;
+}
+
+.estado {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.estado-pendiente {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.estado-aprobado {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.estado-rechazado {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
