@@ -1,19 +1,29 @@
 import { useState } from "react";
 import FormNuevaUbicacion from "./FormNuevaUbicacion.jsx";
 
-export default function PopupCentro({ centro, categorias, onEditar, onEliminar }) {
+export default function PopupCentro({ ubicacion, categorias, zonas, onEditar, onEliminar }) {
   const [modo, setModo] = useState("ver");
-  const [lng, lat] = centro.ubicacion.coordinates;
+  const [error, setError] = useState("");
+  const [lng, lat] = ubicacion.ubicacion.coordinates;
+
+  async function confirmarEliminar() {
+    try {
+      await onEliminar(ubicacion._id);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
 
   if (modo === "editar") {
     return (
       <FormNuevaUbicacion
-        titulo="Editar centro"
-        inicial={centro}
+        titulo="Editar ubicación"
+        inicial={ubicacion}
         punto={{ lat, lng }}
         categorias={categorias}
-        onGuardar={(actualizado) => {
-          onEditar(actualizado);
+        zonas={zonas}
+        onGuardar={async (cambios) => {
+          await onEditar(ubicacion._id, cambios);
           setModo("ver");
         }}
         onCancelar={() => setModo("ver")}
@@ -23,16 +33,21 @@ export default function PopupCentro({ centro, categorias, onEditar, onEliminar }
 
   return (
     <div className="popup-centro">
-      <strong>{centro.nombre}</strong>
-      <span className="popup-meta">{centro.categoria.nombre}</span>
-      <span>{centro.descripcion}</span>
+      <strong>{ubicacion.nombre}</strong>
+      <span className="popup-meta">
+        {ubicacion.categoria?.nombre ?? "Sin categoría"}
+        {ubicacion.zona && ` · ${ubicacion.zona.nombre}`}
+      </span>
+      <span>{ubicacion.descripcion}</span>
       <small className="popup-meta">{lat.toFixed(4)}, {lng.toFixed(4)}</small>
+
+      {error && <p className="form-error" role="alert">{error}</p>}
 
       {modo === "confirmar" ? (
         <div className="popup-confirmar">
-          <span>¿Eliminar este centro?</span>
+          <span>¿Eliminar esta ubicación?</span>
           <div className="form-acciones">
-            <button type="button" className="btn-peligro" onClick={() => onEliminar(centro.id)}>
+            <button type="button" className="btn-peligro" onClick={confirmarEliminar}>
               Sí, eliminar
             </button>
             <button type="button" className="btn-secundario" onClick={() => setModo("ver")}>

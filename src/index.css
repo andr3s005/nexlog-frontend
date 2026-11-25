@@ -105,3 +105,9 @@ body {
   font: 600 14px Inter, sans-serif;
   cursor: pointer;
 }
+
+
+.mensaje-info {
+  background: var(--color-soft);
+  color: var(--color-text);
+}

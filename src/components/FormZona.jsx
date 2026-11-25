@@ -1,12 +1,13 @@
 import { useState } from "react";
 
-export default function FormZona({ centros, onGuardar, onCancelar }){
+export default function FormZona({ centros, onGuardar, onCancelar }) {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [centroId, setCentroId] = useState("");
   const [error, setError] = useState("");
+  const [guardando, setGuardando] = useState(false);
 
-  function manejarEnvio(e) {
+  async function manejarEnvio(e) {
     e.preventDefault();
 
     if (nombre.trim().length < 2) {
@@ -22,7 +23,14 @@ export default function FormZona({ centros, onGuardar, onCancelar }){
       return;
     }
 
-    onGuardar({ nombre: nombre.trim(), descripcion: descripcion.trim(), centroId });
+    setError("");
+    setGuardando(true);
+    try {
+      await onGuardar({ nombre: nombre.trim(), descripcion: descripcion.trim(), centroId });
+    } catch (err) {
+      setError(err.message);
+      setGuardando(false);
+    }
   }
 
   return (
@@ -39,14 +47,16 @@ export default function FormZona({ centros, onGuardar, onCancelar }){
       <select id="zona-centro" value={centroId} onChange={(e) => setCentroId(e.target.value)}>
         <option value="">Elige un centro</option>
         {centros.map((c) => (
-          <option key={c.id} value={c.id}>{c.nombre}</option>
+          <option key={c._id} value={c._id}>{c.nombre}</option>
         ))}
       </select>
 
       {error && <p className="form-error" role="alert">{error}</p>}
 
       <div className="form-acciones">
-        <button type="submit" className="btn-primario">Guardar</button>
+        <button type="submit" className="btn-primario" disabled={guardando}>
+          {guardando ? "Guardando…" : "Guardar"}
+        </button>
         <button type="button" className="btn-secundario" onClick={onCancelar}>Cancelar</button>
       </div>
     </form>

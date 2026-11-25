@@ -6,7 +6,7 @@ const PESTANAS = [
   { id: "tiempo", label: "Línea de tiempo" },
 ];
 
-export default function PanelInferior({ centros, seleccionado, onSeleccionar }) {
+export default function PanelInferior({ ubicaciones, seleccionado, onSeleccionar }) {
   const [pestana, setPestana] = useState("ubicaciones");
   const [abierto, setAbierto] = useState(true);
 
@@ -26,7 +26,7 @@ export default function PanelInferior({ centros, seleccionado, onSeleccionar }) 
             }}
           >
             {p.label}
-            {p.id === "ubicaciones" && ` (${centros.length})`}
+            {p.id === "ubicaciones" && ` (${ubicaciones.length})`}
           </button>
         ))}
         <button type="button" className="btn-secundario inferior-plegar" onClick={() => setAbierto(!abierto)}>
@@ -43,24 +43,28 @@ export default function PanelInferior({ centros, seleccionado, onSeleccionar }) 
                   <th>Nombre</th>
                   <th>Descripción</th>
                   <th>Categoría</th>
+                  <th>Zona</th>
                   <th>Latitud</th>
                   <th>Longitud</th>
+                  <th>Registro</th>
                 </tr>
               </thead>
               <tbody>
-                {centros.map((centro) => {
-                  const [lng, lat] = centro.ubicacion.coordinates;
+                {ubicaciones.map((u) => {
+                  const [lng, lat] = u.ubicacion.coordinates;
                   return (
                     <tr
-                      key={centro.id}
-                      className={centro.id === seleccionado ? "fila-activa" : ""}
-                      onClick={() => onSeleccionar(centro.id)}
+                      key={u._id}
+                      className={u._id === seleccionado ? "fila-activa" : ""}
+                      onClick={() => onSeleccionar(u._id)}
                     >
-                      <td>{centro.nombre}</td>
-                      <td>{centro.descripcion}</td>
-                      <td>{centro.categoria.nombre}</td>
+                      <td>{u.nombre}</td>
+                      <td>{u.descripcion}</td>
+                      <td>{u.categoria?.nombre ?? "Sin categoría"}</td>
+                      <td>{u.zona?.nombre ?? "—"}</td>
                       <td>{lat.toFixed(4)}</td>
                       <td>{lng.toFixed(4)}</td>
+                      <td>{new Date(u.createdAt).toLocaleDateString("es-MX")}</td>
                     </tr>
                   );
                 })}

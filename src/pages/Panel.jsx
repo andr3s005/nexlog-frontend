@@ -1,92 +1,178 @@
-import { useEffect, useState } from "react";
-import { CENTROS_EJEMPLO, CATEGORIAS_EJEMPLO } from "../data/ejemplos.js";
+import { useCallback, useEffect, useState } from "react";
 import TopBar from "../components/TopBar.jsx";
 import Mapa from "../components/Mapa.jsx";
 import ListaSeccion from "../components/ListaSeccion.jsx";
 import Detalle from "../components/Detalle.jsx";
+import FormRegistro from "../components/FormRegistro.jsx";
 import PanelInferior from "../components/PanelInferior.jsx";
+import { listar, crear, actualizar, eliminar } from "../services/recursos.js";
+import { SECCIONES } from "../data/secciones.js";
 import "../styles/Panel.css";
 
-const SECCIONES = [
-  { id: "centros", label: "Centros", nuevo: "Nuevo centro" },
-  { id: "rutas", label: "Rutas", nuevo: "Nueva ruta" },
-  { id: "entregas", label: "Entregas", nuevo: "Nueva entrega" },
-  { id: "repartidores", label: "Repartidores", nuevo: "Nuevo repartidor" },
-  { id: "vehiculos", label: "Vehículos", nuevo: "Nuevo vehículo" },
-  { id: "zonas", label: "Zonas", nuevo: "Dibujar zona" },
-  { id: "categorias", label: "Categorías", nuevo: "Nueva categoría" },
-];
+const FILTROS_VACIOS = { nombre: "", categoria: "", zona: "" };
 
 export default function Panel() {
-  const [seccion, setSeccion] = useState("centros");
+  const [seccion, setSeccion] = useState("ubicaciones");
   const actual = SECCIONES.find((s) => s.id === seccion);
 
-  const [centros, setCentros] = useState(CENTROS_EJEMPLO);
+  const [datos, setDatos] = useState({
+    ubicaciones: [],
+    zonas: [],
+    categorias: [],
+    repartidores: [],
+    vehiculos: [],
+    centros: [],
+  });
+  const [cargando, setCargando] = useState(true);
+  const [filtros, setFiltros] = useState(FILTROS_VACIOS);
   const [seleccionado, setSeleccionado] = useState(null);
-
-  const centroSeleccionado = centros.find((c) => c.id === seleccionado) || null;
-
-  const [zonas, setZonas] = useState([]);
-
-  function crearZona(nueva) {
-    setZonas((anteriores) => [...anteriores, nueva]);
-    setAviso({ tipo: "exito", texto: "Zona guardada." });
-  }
-
-  function eliminarZona(id) {
-    setZonas((anteriores) => anteriores.filter((z) => z.id !== id));
-    setAviso({ tipo: "exito", texto: "Zona eliminada." });
-  }
-
+  const [registro, setRegistro] = useState(null);
   const [aviso, setAviso] = useState(null);
+
+  const ubicacionSeleccionada = datos.ubicaciones.find((u) => u._id === seleccionado) || null;
 
   useEffect(() => {
     if (!aviso) return;
-    const temporizador = setTimeout(() => setAviso(null), 3000);
+    const temporizador = setTimeout(() => setAviso(null), 4000);
     return () => clearTimeout(temporizador);
   }, [aviso]);
 
-  function crearCentro(nuevo) {
-    setCentros((anteriores) => [...anteriores, nuevo]);
-    setAviso({ tipo: "exito", texto: "Centro registrado." });
+  const cargar = useCallback(async (id, params = {}) => {
+    const config = SECCIONES.find((s) => s.id === id);
+    const lista = await listar(config.ruta, params);
+    setDatos((anteriores) => ({ ...anteriores, [id]: lista }));
+  }, []);
+
+  useEffect(() => {
+    Promise.all(SECCIONES.map((s) => cargar(s.id)))
+      .catch((error) => setAviso({ tipo: "error", texto: error.message }))
+      .finally(() => setCargando(false));
+  }, [cargar]);
+
+  function cambiarSeccion(id) {
+    setSeccion(id);
+    setRegistro(null);
   }
 
-  function editarCentro(actualizado) {
-    setCentros((anteriores) => anteriores.map((c) => (c.id === actualizado.id ? actualizado : c)));
-    setAviso({ tipo: "exito", texto: "Centro actualizado." });
+  async function aplicarFiltros(nuevos) {
+    setFiltros(nuevos);
+    try {
+      await cargar("ubicaciones", nuevos);
+    } catch (error) {
+      setAviso({ tipo: "error", texto: error.message });
+    }
   }
 
-  function eliminarCentro(id) {
-    setCentros((anteriores) => anteriores.filter((c) => c.id !== id));
+  async function crearUbicacion(nueva) {
+    await crear("/ubicaciones", nueva);
+    await cargar("ubicaciones", filtros);
+    setAviso({ tipo: "exito", texto: "Ubicación registrada." });
+  }
+
+  async function editarUbicacion(id, cambios) {
+    await actualizar("/ubicaciones", id, cambios);
+    await cargar("ubicaciones", filtros);
+    setAviso({ tipo: "exito", texto: "Ubicación actualizada." });
+  }
+
+  async function eliminarUbicacion(id) {
+    await eliminar("/ubicaciones", id);
     if (seleccionado === id) setSeleccionado(null);
-    setAviso({ tipo: "exito", texto: "Centro eliminado." });
+    await cargar("ubicaciones", filtros);
+    setAviso({ tipo: "exito", texto: "Ubicación eliminada." });
+  }
+
+  async function crearZona(nueva) {
+    await crear("/zonas-reparto", nueva);
+    await cargar("zonas");
+    setAviso({ tipo: "exito", texto: "Zona guardada." });
+  }
+
+  async function eliminarZona(id) {
+    try {
+      await eliminar("/zonas-reparto", id);
+      await cargar("zonas");
+      setAviso({ tipo: "exito", texto: "Zona eliminada." });
+    } catch (error) {
+      setAviso({ tipo: "error", texto: error.message });
+    }
+  }
+
+  async function guardarRegistro(valores) {
+    const esNuevo = !registro._id;
+    if (esNuevo) {
+      await crear(actual.ruta, valores);
+    } else {
+      await actualizar(actual.ruta, registro._id, valores);
+    }
+    await cargar(actual.id);
+    setRegistro(null);
+    setAviso({ tipo: "exito", texto: esNuevo ? "Registro creado." : "Cambios guardados." });
+  }
+
+  async function eliminarRegistro() {
+    await eliminar(actual.ruta, registro._id);
+    await cargar(actual.id);
+    setRegistro(null);
+    setAviso({ tipo: "exito", texto: "Registro eliminado." });
+  }
+
+  function manejarNuevo() {
+    if (actual.id === "ubicaciones") {
+      setAviso({ tipo: "info", texto: "Haz clic en el mapa para colocar la nueva ubicación." });
+    } else if (actual.id === "zonas") {
+      setAviso({ tipo: "info", texto: "Usa el botón de polígono del mapa para dibujar la zona." });
+    } else if (actual.campos) {
+      setSeleccionado(null);
+      setRegistro({});
+    }
+  }
+
+  function manejarSeleccion(item) {
+    if (actual.id === "ubicaciones") {
+      setRegistro(null);
+      setSeleccionado(item._id);
+    } else if (actual.campos) {
+      setSeleccionado(null);
+      setRegistro(item);
+    }
   }
 
   return (
     <div className="panel">
-      <TopBar secciones={SECCIONES} actual={actual} onCambiarSeccion={setSeccion} zonas={zonas} />
+      <TopBar
+        secciones={SECCIONES}
+        actual={actual}
+        onCambiarSeccion={cambiarSeccion}
+        categorias={datos.categorias}
+        zonas={datos.zonas}
+        filtros={filtros}
+        onFiltrar={aplicarFiltros}
+        onNuevo={manejarNuevo}
+      />
 
       <div className="panel-cuerpo">
         <aside className="panel-lista">
           <ListaSeccion
             seccion={actual}
-            centros={centros}
-            zonas={zonas}
-            seleccionado={seleccionado}
-            onSeleccionar={setSeleccionado}
+            items={datos[actual.id]}
+            cargando={cargando}
+            seleccionadoId={actual.id === "ubicaciones" ? seleccionado : registro?._id}
+            onSeleccionar={manejarSeleccion}
           />
         </aside>
 
         <main className="panel-mapa">
           <Mapa
-            centros={centros}
-            categorias={CATEGORIAS_EJEMPLO}
-            seleccionado={centroSeleccionado}
-            onCrear={crearCentro}
-            onEditar={editarCentro}
-            onEliminar={eliminarCentro}
+            ubicaciones={datos.ubicaciones}
+            categorias={datos.categorias}
+            zonas={datos.zonas}
+            centros={datos.centros}
+            seleccionado={ubicacionSeleccionada}
+            onCrear={crearUbicacion}
+            onEditar={editarUbicacion}
+            onEliminar={eliminarUbicacion}
             onSeleccionar={setSeleccionado}
-            zonas={zonas}
             onCrearZona={crearZona}
             onEliminarZona={eliminarZona}
           />
@@ -97,14 +183,31 @@ export default function Panel() {
           )}
         </main>
 
-        {centroSeleccionado && (
+        {registro && actual.campos ? (
           <aside className="panel-detalle">
-            <Detalle centro={centroSeleccionado} onCerrar={() => setSeleccionado(null)} />
+            <FormRegistro
+              key={registro._id ?? "nuevo"}
+              seccion={actual}
+              inicial={registro}
+              onGuardar={guardarRegistro}
+              onEliminar={eliminarRegistro}
+              onCancelar={() => setRegistro(null)}
+            />
           </aside>
+        ) : (
+          ubicacionSeleccionada && (
+            <aside className="panel-detalle">
+              <Detalle ubicacion={ubicacionSeleccionada} onCerrar={() => setSeleccionado(null)} />
+            </aside>
+          )
         )}
       </div>
 
-      <PanelInferior centros={centros} seleccionado={seleccionado} onSeleccionar={setSeleccionado} />
+      <PanelInferior
+        ubicaciones={datos.ubicaciones}
+        seleccionado={seleccionado}
+        onSeleccionar={setSeleccionado}
+      />
     </div>
   );
 }

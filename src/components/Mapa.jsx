@@ -20,14 +20,14 @@ function AjustarTamano() {
   return null;
 }
 
-function CentrarEn({ centro }) {
+function CentrarEn({ ubicacion }) {
   const map = useMap();
 
   useEffect(() => {
-    if (!centro) return;
-    const [lng, lat] = centro.ubicacion.coordinates;
+    if (!ubicacion) return;
+    const [lng, lat] = ubicacion.ubicacion.coordinates;
     map.flyTo([lat, lng], 15);
-  }, [centro, map]);
+  }, [ubicacion, map]);
 
   return null;
 }
@@ -44,32 +44,41 @@ function ClicEnMapa({ onClic }) {
   return null;
 }
 
-export default function Mapa({ centros, categorias, zonas, seleccionado, onCrear, onEditar, onEliminar, onSeleccionar, onCrearZona, onEliminarZona }) {
+export default function Mapa({
+  ubicaciones,
+  categorias,
+  zonas,
+  centros,
+  seleccionado,
+  onCrear,
+  onEditar,
+  onEliminar,
+  onSeleccionar,
+  onCrearZona,
+  onEliminarZona,
+}) {
   const [puntoNuevo, setPuntoNuevo] = useState(null);
   const [zonaNueva, setZonaNueva] = useState(null);
 
   const manejarDibujo = useCallback((dibujo) => setZonaNueva(dibujo), []);
 
-  function guardarNuevo(centro) {
-    onCrear(centro);
+  async function guardarNueva(datos) {
+    await onCrear(datos);
     setPuntoNuevo(null);
   }
-  
-  function guardarZona({ nombre, descripcion, centroId }) {
-    const centro = centros.find((c) => c.id === centroId);
-    onCrearZona({
-      id: String(Date.now()),
+
+  async function guardarZona({ nombre, descripcion, centroId }) {
+    await onCrearZona({
       nombre,
       descripcion,
-      centro: { id: centro.id, nombre: centro.nombre },
+      centro: centroId,
       geometria: zonaNueva.geometria,
     });
     setZonaNueva(null);
   }
 
-
   return (
-    <MapContainer center={CENTRO_LEON} zoom={15} className="mapa">
+    <MapContainer center={CENTRO_LEON} zoom={13} className="mapa">
       <TileLayer
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
@@ -77,13 +86,12 @@ export default function Mapa({ centros, categorias, zonas, seleccionado, onCrear
 
       <AjustarTamano />
       <ClicEnMapa onClic={setPuntoNuevo} />
-      <CentrarEn centro={seleccionado} />
-
+      <CentrarEn ubicacion={seleccionado} />
       <ControlDibujo onDibujar={manejarDibujo} />
 
       {zonas.map((zona) => (
         <Polygon
-          key={zona.id}
+          key={zona._id}
           positions={zona.geometria.coordinates[0].map(([lng, lat]) => [lat, lng])}
           bubblingMouseEvents={false}
           pathOptions={{ className: "zona" }}
@@ -91,10 +99,10 @@ export default function Mapa({ centros, categorias, zonas, seleccionado, onCrear
           <Popup>
             <div className="popup-centro">
               <strong>{zona.nombre}</strong>
-              <span className="popup-meta">{zona.centro.nombre}</span>
+              <span className="popup-meta">{zona.centro?.nombre ?? "Sin centro"}</span>
               <span>{zona.descripcion}</span>
               <div className="form-acciones">
-                <button type="button" className="btn-peligro" onClick={() => onEliminarZona(zona.id)}>
+                <button type="button" className="btn-peligro" onClick={() => onEliminarZona(zona._id)}>
                   Eliminar zona
                 </button>
               </div>
@@ -103,30 +111,22 @@ export default function Mapa({ centros, categorias, zonas, seleccionado, onCrear
         </Polygon>
       ))}
 
-      {zonaNueva && (
-        <Popup
-          position={zonaNueva.centro}
-          eventHandlers={{ remove: () => setZonaNueva(null) }}
-        >
-          <FormZona centros={centros} onGuardar={guardarZona} onCancelar={() => setZonaNueva(null)} />
-        </Popup>
-      )}
-
-      {centros.map((centro) => {
-        const [lng, lat] = centro.ubicacion.coordinates;
+      {ubicaciones.map((ubicacion) => {
+        const [lng, lat] = ubicacion.ubicacion.coordinates;
         return (
           <CircleMarker
-            key={centro.id}
+            key={ubicacion._id}
             center={[lat, lng]}
-            radius={seleccionado?.id === centro.id ? 12 : 9}
+            radius={seleccionado?._id === ubicacion._id ? 12 : 9}
             bubblingMouseEvents={false}
             pathOptions={{ className: "marcador-centro" }}
-            eventHandlers={{ click: () => onSeleccionar(centro.id) }}
+            eventHandlers={{ click: () => onSeleccionar(ubicacion._id) }}
           >
             <Popup>
               <PopupCentro
-                centro={centro}
+                ubicacion={ubicacion}
                 categorias={categorias}
+                zonas={zonas}
                 onEditar={onEditar}
                 onEliminar={onEliminar}
               />
@@ -136,17 +136,21 @@ export default function Mapa({ centros, categorias, zonas, seleccionado, onCrear
       })}
 
       {puntoNuevo && (
-        <Popup
-          position={puntoNuevo}
-          eventHandlers={{ remove: () => setPuntoNuevo(null) }}
-        >
+        <Popup position={puntoNuevo} eventHandlers={{ remove: () => setPuntoNuevo(null) }}>
           <FormNuevaUbicacion
             key={`${puntoNuevo.lat}-${puntoNuevo.lng}`}
             punto={puntoNuevo}
             categorias={categorias}
-            onGuardar={guardarNuevo}
+            zonas={zonas}
+            onGuardar={guardarNueva}
             onCancelar={() => setPuntoNuevo(null)}
           />
+        </Popup>
+      )}
+
+      {zonaNueva && (
+        <Popup position={zonaNueva.centro} eventHandlers={{ remove: () => setZonaNueva(null) }}>
+          <FormZona centros={centros} onGuardar={guardarZona} onCancelar={() => setZonaNueva(null)} />
         </Popup>
       )}
     </MapContainer>
