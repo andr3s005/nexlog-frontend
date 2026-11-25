@@ -16,6 +16,7 @@ export default function PopupCentro({ ubicacion, categorias, zonas, onEditar, on
 
   if (modo === "editar") {
     return (
+      <div onClick={(e) => e.stopPropagation()}>
       <FormNuevaUbicacion
         titulo="Editar ubicación"
         inicial={ubicacion}
@@ -28,11 +29,12 @@ export default function PopupCentro({ ubicacion, categorias, zonas, onEditar, on
         }}
         onCancelar={() => setModo("ver")}
       />
+      </div>
     );
   }
 
   return (
-    <div className="popup-centro">
+    <div className="popup-centro" onClick={(e) => e.stopPropagation()}>
       <strong>{ubicacion.nombre}</strong>
       <span className="popup-meta">
         {ubicacion.categoria?.nombre ?? "Sin categoría"}
