@@ -1,4 +1,25 @@
-export default function ListaSeccion({ seccion, centros, seleccionado, onSeleccionar }) {
+export default function ListaSeccion({ seccion, centros, zonas,  seleccionado, onSeleccionar }) {
+  if (seccion.id === "zonas") {
+  return (
+    <>
+      <h2 className="lista-titulo">Zonas ({zonas.length})</h2>
+      {zonas.length === 0 ? (
+        <p className="lista-vacia">Dibuja una zona con el botón de polígono del mapa.</p>
+      ) : (
+        <ul className="lista">
+          {zonas.map((zona) => (
+            <li key={zona.id}>
+              <div className="lista-item">
+                <strong>{zona.nombre}</strong>
+                <span>{zona.centro.nombre}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
   if (seccion.id !== "centros") {
     return (
       <>

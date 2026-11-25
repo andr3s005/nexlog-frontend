@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/TopBar.css";
 
-export default function TopBar({ secciones, actual, onCambiarSeccion }) {
+export default function TopBar({ secciones, actual, onCambiarSeccion, zonas }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   function elegir(id) {
@@ -59,6 +59,9 @@ export default function TopBar({ secciones, actual, onCambiarSeccion }) {
         </select>
         <select aria-label="Zona">
           <option value="">Zona: todas</option>
+          {zonas.map((zona) => (
+            <option key={zona.id} value={zona.id}>{zona.nombre}</option>
+          ))}
         </select>
         <button type="submit" className="btn-primario">Buscar</button>
       </form>

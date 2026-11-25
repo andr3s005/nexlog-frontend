@@ -89,3 +89,12 @@
   padding: 0 10px;
   font-size: 13px;
 }
+
+
+.zona {
+  fill: var(--map-zona);
+  fill-opacity: 0.15;
+  stroke: var(--map-zona);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}

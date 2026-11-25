@@ -26,6 +26,18 @@ export default function Panel() {
 
   const centroSeleccionado = centros.find((c) => c.id === seleccionado) || null;
 
+  const [zonas, setZonas] = useState([]);
+
+  function crearZona(nueva) {
+    setZonas((anteriores) => [...anteriores, nueva]);
+    setAviso({ tipo: "exito", texto: "Zona guardada." });
+  }
+
+  function eliminarZona(id) {
+    setZonas((anteriores) => anteriores.filter((z) => z.id !== id));
+    setAviso({ tipo: "exito", texto: "Zona eliminada." });
+  }
+
   const [aviso, setAviso] = useState(null);
 
   useEffect(() => {
@@ -52,13 +64,14 @@ export default function Panel() {
 
   return (
     <div className="panel">
-      <TopBar secciones={SECCIONES} actual={actual} onCambiarSeccion={setSeccion} />
+      <TopBar secciones={SECCIONES} actual={actual} onCambiarSeccion={setSeccion} zonas={zonas} />
 
       <div className="panel-cuerpo">
         <aside className="panel-lista">
           <ListaSeccion
             seccion={actual}
             centros={centros}
+            zonas={zonas}
             seleccionado={seleccionado}
             onSeleccionar={setSeleccionado}
           />
@@ -73,6 +86,9 @@ export default function Panel() {
             onEditar={editarCentro}
             onEliminar={eliminarCentro}
             onSeleccionar={setSeleccionado}
+            zonas={zonas}
+            onCrearZona={crearZona}
+            onEliminarZona={eliminarZona}
           />
           {aviso && (
             <p className={`mensaje mensaje-${aviso.tipo} aviso-flotante`} role="status">
