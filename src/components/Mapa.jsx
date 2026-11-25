@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef,  useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Polygon, Popup, useMap, useMapEvents } from "react-leaflet";
 import FormNuevaUbicacion from "./FormNuevaUbicacion.jsx";
 import PopupCentro from "./PopupCentro.jsx";
@@ -16,6 +16,25 @@ function AjustarTamano() {
     observador.observe(map.getContainer());
     return () => observador.disconnect();
   }, [map]);
+
+  return null;
+}
+
+function AjustarVista({ ubicaciones }) {
+  const map = useMap();
+  const yaAjustado = useRef(false);
+
+  useEffect(() => {
+    if (yaAjustado.current || ubicaciones.length === 0) return;
+
+    const puntos = ubicaciones.map((u) => {
+      const [lng, lat] = u.ubicacion.coordinates;
+      return [lat, lng];
+    });
+
+    map.fitBounds(puntos, { padding: [40, 40] });
+    yaAjustado.current = true;
+  }, [ubicaciones, map]);
 
   return null;
 }
@@ -85,6 +104,7 @@ export default function Mapa({
       />
 
       <AjustarTamano />
+      <AjustarVista ubicaciones={ubicaciones} />
       <ClicEnMapa onClic={setPuntoNuevo} />
       <CentrarEn ubicacion={seleccionado} />
       <ControlDibujo onDibujar={manejarDibujo} />
