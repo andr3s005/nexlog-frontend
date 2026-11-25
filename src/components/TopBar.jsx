@@ -48,7 +48,7 @@ export default function TopBar({ secciones, actual, onCambiarSeccion, categorias
           aria-expanded={menuAbierto}
           onClick={() => setMenuAbierto(!menuAbierto)}
         >
-          ☰ {actual.label}
+          ☰ Opciones
         </button>
 
         {menuAbierto && (

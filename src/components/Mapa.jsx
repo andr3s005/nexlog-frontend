@@ -61,7 +61,7 @@ function CapaZonas({ zonas, onClicZona }) {
       key={zona._id}
       positions={zona.geometria.coordinates[0].map(([lng, lat]) => [lat, lng])}
       bubblingMouseEvents={false}
-      pathOptions={{ className: "zona" }}
+      className="zona"
       eventHandlers={{
         click: (e) => {
           if (map.pm?.globalDrawModeEnabled()) return;
@@ -140,7 +140,7 @@ export default function Mapa({
               center={[lat, lng]}
               radius={seleccionado?._id === ubicacion._id ? 12 : 9}
               bubblingMouseEvents={false}
-              pathOptions={{ className: "marcador-centro" }}
+              className="marcador-centro"
               eventHandlers={{ click: () => onSeleccionar(ubicacion._id) }}
             >
               <Popup>
