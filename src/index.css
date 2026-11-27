@@ -125,3 +125,13 @@ body {
   font: 600 14px Inter, sans-serif;
   cursor: pointer;
 }
+
+/* Colores de las entregas según su estado */
+:root {
+  --entrega-pendiente: #6B7280;
+  --entrega-asignada: #7C3AED;
+  --entrega-en_ruta: #D97706;
+  --entrega-entregada: #15803D;
+  --entrega-incidencia: #DC2626;
+  --entrega-cancelada: #111827;
+}

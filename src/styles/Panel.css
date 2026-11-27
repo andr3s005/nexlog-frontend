@@ -249,3 +249,32 @@
   margin: 4px 0 0;
   padding-left: 18px;
 }
+
+/* Leyenda de estados de entrega */
+.panel-mapa { position: relative; }
+.leyenda {
+  position: absolute;
+  left: 12px;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--color-superficie, #fff);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 0.8rem;
+}
+.leyenda > span { display: inline-flex; align-items: center; gap: 6px; }
+.leyenda-color { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #ccc; }
+.leyenda-pendiente  { background: var(--entrega-pendiente); }
+.leyenda-asignada   { background: var(--entrega-asignada); }
+.leyenda-en_ruta    { background: var(--entrega-en_ruta); }
+.leyenda-entregada  { background: var(--entrega-entregada); }
+.leyenda-incidencia { background: var(--entrega-incidencia); }
+.leyenda-cancelada  { background: var(--entrega-cancelada); }
+
+.form-registro-punto { font-size: 0.85rem; }
+.form-registro-punto .vacio { color: var(--color-error, #DC2626); }
+.form-registro-etiqueta { font-weight: 600; display: block; margin-bottom: 4px; }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function DetalleZona({ zona, onEliminar, onCerrar }) {
+export default function DetalleZona({ zona, onEditar, onEliminar, onCerrar }) {
   const [confirmar, setConfirmar] = useState(false);
 
   return (
@@ -22,6 +22,12 @@ export default function DetalleZona({ zona, onEliminar, onCerrar }) {
         <dt>Vértices</dt>
         <dd>{zona.geometria.coordinates[0].length - 1}</dd>
       </dl>
+
+      <div className="form-acciones">
+        <button type="button" className="btn-editar" onClick={onEditar}>
+          Editar zona
+        </button>
+      </div>
 
       <div className="form-registro-eliminar">
         {confirmar ? (

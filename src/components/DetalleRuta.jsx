@@ -1,4 +1,4 @@
-export default function DetalleRuta({ ruta, onCerrar }) {
+export default function DetalleRuta({ ruta, onEditar, onCerrar }) {
   return (
     <div className="detalle">
       <div className="detalle-encabezado">
@@ -34,6 +34,12 @@ export default function DetalleRuta({ ruta, onCerrar }) {
           </ol>
         </dd>
       </dl>
+
+      <div className="form-acciones">
+        <button type="button" className="btn-editar" onClick={onEditar}>
+          Editar ruta
+        </button>
+      </div>
 
       <p className="detalle-nota">La línea naranja del mapa muestra el recorrido de la ruta.</p>
     </div>

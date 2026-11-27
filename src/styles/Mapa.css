@@ -107,3 +107,24 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* Entregas: círculo con borde blanco y relleno según estado */
+.entrega { stroke: #fff; stroke-width: 2; fill-opacity: 1; }
+.entrega-pendiente  { fill: var(--entrega-pendiente); }
+.entrega-asignada   { fill: var(--entrega-asignada); }
+.entrega-en_ruta    { fill: var(--entrega-en_ruta); }
+.entrega-entregada  { fill: var(--entrega-entregada); }
+.entrega-incidencia { fill: var(--entrega-incidencia); }
+.entrega-cancelada  { fill: var(--entrega-cancelada); }
+
+/* Centros de distribución: cuadrado azul marino */
+.icono-centro {
+  background: #0F2A44;
+  border: 2px solid #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Punto que se está eligiendo y ruta trazada sin guardar */
+.punto-temporal { stroke: #F59E0B; stroke-width: 3; stroke-dasharray: 6 4; fill: none; }
+.ruta-nueva { stroke-dasharray: 8 6; }

@@ -3,6 +3,7 @@ import { useMap } from "react-leaflet";
 import "@geoman-io/leaflet-geoman-free";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
+// Agrega a la esquina del mapa los botones de Geoman: polígono (zonas) y línea (rutas).
 export default function ControlDibujo({ onDibujar }) {
     const map = useMap();
 
@@ -10,9 +11,9 @@ export default function ControlDibujo({ onDibujar }) {
         map.pm.addControls({
             position: "topleft",
             drawPolygon: true,
+            drawPolyline: true,
             drawMarker: false,
             drawCircleMarker: false,
-            drawPolyline: false,
             drawRectangle: false,
             drawCircle: false,
             drawText: false,
@@ -23,11 +24,13 @@ export default function ControlDibujo({ onDibujar }) {
             rotateMode: false,
         });
 
-        function alTerminar(e){
+        // Al terminar un dibujo se saca su GeoJSON, se borra la capa temporal
+        // y se avisa al mapa qué figura fue (e.shape es "Polygon" o "Line").
+        function alTerminar(e) {
             const geometria = e.layer.toGeoJSON().geometry;
             const centro = e.layer.getBounds().getCenter();
             map.removeLayer(e.layer);
-            onDibujar({ geometria, centro});
+            onDibujar({ tipo: e.shape, geometria, centro });
         }
 
         map.on("pm:create", alTerminar);

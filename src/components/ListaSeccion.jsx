@@ -28,9 +28,6 @@ export default function ListaSeccion({ seccion, items, cargando, seleccionadoId,
         </ul>
       )}
 
-      {seccion.id === "centros" && (
-        <p className="lista-vacia">Los centros se consultan aquí; se registran desde el backend.</p>
-      )}
     </>
   );
 }
